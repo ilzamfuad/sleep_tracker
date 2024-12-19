@@ -11,4 +11,12 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+  namespace :users do
+    get "/:id/sleeps", action: :list_sleeps
+    post "/follows", action: :follow
+    delete "/follows", action: :unfollow
+  end
+
+  post "sleeps/clock-ins", to: "sleeps#clock_in"
+  post "sleeps/clock-outs", to: "sleeps#clock_out"
 end
