@@ -11,7 +11,7 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema[8.0].define(version: 2024_12_18_063313) do
-  create_table "follows", id: false, force: :cascade do |t|
+  create_table "follows", force: :cascade do |t|
     t.integer "follower_id"
     t.integer "followee_id"
     t.boolean "is_followed"
@@ -20,17 +20,20 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_18_063313) do
     t.index ["follower_id", "followee_id"], name: "index_follows_on_follower_id_and_followee_id"
   end
 
-  create_table "sleep_trackers", id: false, force: :cascade do |t|
-    t.integer "user_id"
-    t.datetime "sleep_time"
+  create_table "sleep_records", force: :cascade do |t|
+    t.string "status"
+    t.integer "user_id", null: false
+    t.datetime "sleep_time", null: false
     t.datetime "wake_time"
     t.integer "duration"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_sleep_trackers_on_user_id"
+    t.index ["user_id"], name: "index_sleep_records_on_user_id"
   end
 
-# Could not dump table "users" because of following StandardError
-#   Unknown type 'uuid' for column 'id'
-
+  create_table "users", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 end
