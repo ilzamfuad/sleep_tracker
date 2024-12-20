@@ -4,6 +4,6 @@ FactoryBot.define do
     sleep_time { "2021-08-01 22:00:00" }
     wake_time { "2021-08-02 06:00:00" }
     duration { 8 }
-    is_followed { true }
+    status { "inactive" }
   end
 end
