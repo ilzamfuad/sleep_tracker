@@ -24,6 +24,7 @@ RSpec.describe UsersController, type: :controller do
 
         expect(response).to have_http_status(:bad_request)
         expect(JSON.parse(response.body)).to be_a(Hash)
+        expect(JSON.parse(response.body)['errors'][0]['message']).to eq(InvalidParameterError.new.message)
       end
     end
 
@@ -35,6 +36,7 @@ RSpec.describe UsersController, type: :controller do
 
         expect(response).to have_http_status(:not_found)
         expect(JSON.parse(response.body)).to be_a(Hash)
+        expect(JSON.parse(response.body)['errors'][0]['message']).to eq(UserNotFoundError.new.message)
       end
     end
   end
@@ -63,6 +65,7 @@ RSpec.describe UsersController, type: :controller do
 
         expect(response).to have_http_status(:bad_request)
         expect(JSON.parse(response.body)).to be_a(Hash)
+        expect(JSON.parse(response.body)['errors'][0]['message']).to eq(InvalidParameterError.new.message)
       end
     end
 
@@ -74,6 +77,7 @@ RSpec.describe UsersController, type: :controller do
 
         expect(response).to have_http_status(:unprocessable_entity)
         expect(JSON.parse(response.body)).to be_a(Hash)
+        expect(JSON.parse(response.body)['errors'][0]['message']).to eq(FollowSelfError.new.message)
       end
     end
 
@@ -84,6 +88,18 @@ RSpec.describe UsersController, type: :controller do
         post :follow, params: invalid_params, as: :json
 
         expect(response).to have_http_status(:not_found)
+        expect(JSON.parse(response.body)).to be_a(Hash)
+        expect(JSON.parse(response.body)['errors'][0]['message']).to eq(UserNotFoundError.new.message)
+      end
+    end
+
+    context 'when the follower already follow followee' do
+      it 'returns a FollowSelfError error and unproccessable entity status' do
+        allow_any_instance_of(Services::UserFollow::Dofollow).to receive(:call).and_raise(AlreadyFollowError)
+
+        post :follow, params: params, as: :json
+
+        expect(response).to have_http_status(:unprocessable_entity)
         expect(JSON.parse(response.body)).to be_a(Hash)
       end
     end
@@ -113,6 +129,7 @@ RSpec.describe UsersController, type: :controller do
 
         expect(response).to have_http_status(:bad_request)
         expect(JSON.parse(response.body)).to be_a(Hash)
+        expect(JSON.parse(response.body)['errors'][0]['message']).to eq(InvalidParameterError.new.message)
       end
     end
 
@@ -124,6 +141,7 @@ RSpec.describe UsersController, type: :controller do
 
         expect(response).to have_http_status(:unprocessable_entity)
         expect(JSON.parse(response.body)).to be_a(Hash)
+        expect(JSON.parse(response.body)['errors'][0]['message']).to eq(UnfollowSelfError.new.message)
       end
     end
 
@@ -135,6 +153,29 @@ RSpec.describe UsersController, type: :controller do
 
         expect(response).to have_http_status(:not_found)
         expect(JSON.parse(response.body)).to be_a(Hash)
+        expect(JSON.parse(response.body)['errors'][0]['message']).to eq(UserNotFoundError.new.message)
+      end
+    end
+
+    context 'when the follower not following yet' do
+      it 'returns a FollowSelfError error and unproccessable entity status' do
+        allow_any_instance_of(Services::UserFollow::Unfollow).to receive(:call).and_raise(NotFollowError)
+
+        delete :unfollow, params: params, as: :json
+
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(JSON.parse(response.body)['errors'][0]['message']).to eq(NotFollowError.new.message)
+      end
+    end
+
+    context 'when the follower already unfollow followee' do
+      it 'returns a AlreadyUnfollowError error and unproccessable entity status' do
+        allow_any_instance_of(Services::UserFollow::Unfollow).to receive(:call).and_raise(AlreadyUnfollowError)
+
+        delete :unfollow, params: params, as: :json
+
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(JSON.parse(response.body)['errors'][0]['message']).to eq(AlreadyUnfollowError.new.message)
       end
     end
   end

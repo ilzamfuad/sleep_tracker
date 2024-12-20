@@ -24,6 +24,7 @@ RSpec.describe SleepsController, type: :controller do
 
         expect(response).to have_http_status(:bad_request)
         expect(JSON.parse(response.body)).to be_a(Hash)
+        expect(JSON.parse(response.body)['errors'][0]['message']).to eq(InvalidParameterError.new.message)
       end
     end
 
@@ -35,6 +36,7 @@ RSpec.describe SleepsController, type: :controller do
 
         expect(response).to have_http_status(:not_found)
         expect(JSON.parse(response.body)).to be_a(Hash)
+        expect(JSON.parse(response.body)['errors'][0]['message']).to eq(UserNotFoundError.new.message)
       end
     end
 
@@ -46,6 +48,7 @@ RSpec.describe SleepsController, type: :controller do
 
         expect(response).to have_http_status(:unprocessable_entity)
         expect(JSON.parse(response.body)).to be_a(Hash)
+        expect(JSON.parse(response.body)['errors'][0]['message']).to eq(AlreadyRecordSleepError.new.message)
       end
     end
   end
@@ -73,6 +76,7 @@ RSpec.describe SleepsController, type: :controller do
 
         expect(response).to have_http_status(:bad_request)
         expect(JSON.parse(response.body)).to be_a(Hash)
+        expect(JSON.parse(response.body)['errors'][0]['message']).to eq(InvalidParameterError.new.message)
       end
     end
 
@@ -95,6 +99,7 @@ RSpec.describe SleepsController, type: :controller do
 
         expect(response).to have_http_status(:unprocessable_entity)
         expect(JSON.parse(response.body)).to be_a(Hash)
+        expect(JSON.parse(response.body)['errors'][0]['message']).to eq(NoSleepRecordFoundError.new.message)
       end
     end
   end
